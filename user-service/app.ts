@@ -1,12 +1,16 @@
-import express, { Application } from 'express';
+import express, { Application } from "express";
+import userRoutes from "./routes/router";
+import bodyParser from "body-parser";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
+// Middleware
+app.use(bodyParser.json());
+
+// Routes
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
-})
+  console.log(`Example app listening on port ${PORT}`);
+});
