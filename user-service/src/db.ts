@@ -1,9 +1,8 @@
-// db.ts
+
 import { Pool } from "pg";
 
-// PostgreSQL Client Configuration
 const pool = new Pool({
-  host: "postgres",  // Host should match the service name from docker-compose if you're using Docker
+  host: "postgres",
   port: 5432,
   user: "postgres",
   password: "admin",
