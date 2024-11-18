@@ -11,6 +11,7 @@ COPY ./src ./src
 
 RUN yarn install --frozen-lockfile
 
+RUN yarn build
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "start"]
 
