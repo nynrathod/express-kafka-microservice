@@ -27,7 +27,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const user = await authenticateUser(username, password);
 
     if (user) {
-      const token = generateAuthToken(user); // Call generateAuthToken directly
+      const token = generateAuthToken(user);
       ResponseHandler.success(res, "Login successful!", { token });
     } else {
       ResponseHandler.error(res, "Invalid credentials");

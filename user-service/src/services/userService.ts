@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import pool from "../db";
+import { AppDataSource } from "../../data-source";
+import { Users } from "../entities/User";
 
 export const createUser = async (
   username: string,
@@ -8,32 +9,33 @@ export const createUser = async (
 ): Promise<any> => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const res = await pool.query(
-    "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *",
-    [username, hashedPassword],
-  );
+  const userRepository = AppDataSource.getRepository(Users);
 
-  return res.rows[0];
+  const user = userRepository.create({
+    username,
+    password: hashedPassword,
+  });
+
+  await userRepository.save(user);
+
+  return user;
 };
 
-// Authenticate User
 export const authenticateUser = async (
   username: string,
   password: string,
 ): Promise<any> => {
-  const res = await pool.query("SELECT * FROM users WHERE username = $1", [
-    username,
-  ]);
+  const userRepository = AppDataSource.getRepository(Users);
 
-  if (res.rows.length === 0) return null;
+  const user = await userRepository.findOneBy({ username });
 
-  const user = res.rows[0];
+  if (!user) return null;
+
   const isMatch = await bcrypt.compare(password, user.password);
 
   return isMatch ? user : null;
 };
 
-// Generate JWT token for authentication
 export const generateAuthToken = (user: any): string => {
   return jwt.sign({ id: user.id, username: user.username }, "jwtPrivateKey", {
     expiresIn: "1h",
