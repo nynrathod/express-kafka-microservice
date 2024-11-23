@@ -1,16 +1,20 @@
-import express from 'express';
+import express from "express";
+import bodyParser from "body-parser";
+import morgan from "morgan";
+import { AppDataSource } from "../data-source";
 import router from "./routes/router";
 
 const app = express();
+const PORT = 4000;
 
-app.use(express.json());
+// Middleware
+app.use(bodyParser.json());
+app.use(morgan("combined"));
 
-app.use('/api/products', router);
+AppDataSource.initialize().then(() => {
+  app.use("/api/products", router);
 
-const PORT =  4000;
-
-app.listen(PORT, () => {
-    console.log(`Product Service is running on port ${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Product service listening on port ${PORT}`);
+  });
 });
-
-export default app;
