@@ -1,0 +1,62 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ecommdb
+
+    volumes:
+      - postgres-data:/data/db
+
+  user-service:
+    build: user-service
+    ports:
+      - "3000:3000"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ecommdb
+
+    depends_on:
+      - postgres
+    volumes:
+      - ./user-service/src:/usr/src/app/src
+      - postgres-user-data:/data/db
+
+  product-service:
+    build: product-service
+    ports:
+      - "4000:4000"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ecommdb
+    depends_on:
+      - postgres
+    volumes:
+      - ./product-service/src:/usr/src/app/src
+      - postgres-product-data:/data/db
+
+
+  order-service:
+    build: order-service
+    ports:
+      - "5000:5000"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ecommdb
+    depends_on:
+      - postgres
+    volumes:
+      - ./order-service/src:/usr/src/app/src
+      - postgres-order-data:/data/db
+
+volumes:
+  postgres-data: { }
+  postgres-user-data: { }
+  postgres-product-data: { }
+  postgres-order-data: { }
