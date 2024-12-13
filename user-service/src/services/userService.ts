@@ -38,6 +38,6 @@ export const authenticateUser = async (
 
 export const generateAuthToken = (user: any): string => {
   return jwt.sign({ id: user.id, username: user.username }, "jwtPrivateKey", {
-    expiresIn: "1h",
+    expiresIn: "10d",
   });
 };

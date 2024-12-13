@@ -30,12 +30,13 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-  const { name, description, price } = req.body;
+  const { name, description, price, stock } = req.body;
   try {
     const product = await productService.createProduct({
       name,
       description,
       price,
+      stock,
     });
     ResponseHandler.success(res, "Product created successfully", product);
   } catch (err) {

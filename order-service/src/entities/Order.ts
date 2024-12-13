@@ -8,14 +8,23 @@ import {
 
 @Entity()
 export class Order {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn()
   id!: string;
+
+  @Column("int", { default: 1 })
+  version!: number;
 
   @Column()
   userId!: string;
 
+  @Column()
+  orderId!: string;
+
   @Column("jsonb")
-  products!: Array<{ productId: string; quantity: number }>;
+  products!: {
+    productId: string;
+    quantity: number;
+  };
 
   @Column("decimal", { precision: 10, scale: 2 })
   totalPrice!: number;
