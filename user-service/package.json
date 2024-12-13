@@ -8,6 +8,8 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm:migrate:dev": "npx typeorm-ts-node-esm migration:generate -d ./data-source.ts ./src/migrations/users",
+    "typeorm:run:dev": "npx typeorm-ts-node-esm migration:run -d ./data-source.ts",
     "typeorm:migrate": "npm run typeorm migration:generate -- -n",
     "typeorm:run": "npx typeorm-ts-node-esm migration:run -d ./dist/data-source.js",
     "typeorm:revert": "npm run typeorm migration:revert"

@@ -7,6 +7,8 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm:migrate:dev": "npx typeorm-ts-node-esm migration:generate -d ./data-source.ts ./src/migrations/order",
+    "typeorm:run:dev": "npx typeorm-ts-node-esm migration:run -d ./data-source.ts",
     "typeorm:migrate": "npm run typeorm migration:generate -- -n",
     "typeorm:run": "npx typeorm-ts-node-esm migration:run -d ./dist/data-source.js",
     "typeorm:revert": "npm run typeorm migration:revert"
@@ -18,9 +20,12 @@
     "body-parser": "^1.20.3",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
+    "kafkajs": "^2.2.4",
     "morgan": "^1.10.0",
     "pg": "^8.13.1",
-    "typeorm": "^0.3.20"
+    "redis": "^4.7.0",
+    "typeorm": "^0.3.20",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
