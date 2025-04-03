@@ -35,6 +35,12 @@ export const validateProducts = async (productId: string, quantity: number) => {
     let lockResult;
 
     productEntity = await productRepository.findOneBy({ productId });
+    const inRedis = await redisClient.get(productId);
+
+    if (inRedis) {
+      console.log("yes here iiiii");
+      return "skip";
+    }
 
     if (productEntity) {
       console.log("Found in DB, caching in Redis...");
@@ -56,6 +62,7 @@ export const validateProducts = async (productId: string, quantity: number) => {
       console.log("lockResult", lockResult);
     } else {
       console.log("Product not found in DB either.");
+      await redisClient.del(productId);
       return {
         productId,
         status: "not_available",
@@ -68,6 +75,7 @@ export const validateProducts = async (productId: string, quantity: number) => {
       console.log("Valid product entity found.");
       const status =
         productEntity.stock < quantity ? "insufficient_stock" : "available";
+      await redisClient.del(productId);
       return {
         productId,
         status,
@@ -78,6 +86,7 @@ export const validateProducts = async (productId: string, quantity: number) => {
 
     // Fallback for unexpected cases
     console.log("Unexpected product data format.");
+    await redisClient.del(productId);
     return {
       productId,
       status: "invalid_product_data",

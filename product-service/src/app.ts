@@ -5,7 +5,8 @@ import { AppDataSource } from "../data-source";
 import router from "./routes/router";
 import { initializeKafka } from "./kafka/kafka";
 import { initializeOrderKafkaHandlers } from "./kafka/product.kafka";
-import { initializeCronJob, startCronJob } from "./config/productSync";
+import { initializeSync, startWorker } from "./config/productWorker";
+import { initializeRedis } from "./config/redisClient";
 
 const app = express();
 const PORT = 4000;
@@ -20,7 +21,16 @@ AppDataSource.initialize()
     await initializeKafka();
     await initializeOrderKafkaHandlers();
 
-    initializeCronJob().catch(console.error);
+    try {
+      // Initialize Redis, start the worker, and repeatable job
+      await initializeRedis();
+      // startProductSyncWorker();
+      startWorker();
+      await initializeSync();
+    } catch (error) {
+      console.error("Error during Redis initialization:", error);
+      process.exit(1); // Exit the application if Redis fails to initialize
+    }
 
     // Proceed with the app setup without waiting for Kafka consumer to be ready
     app.use("/api/products", router);

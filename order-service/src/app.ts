@@ -6,6 +6,7 @@ import router from "./routes/router";
 import { initializeKafka } from "./kafka/kafka";
 import { initializeOrderKafkaHandlers } from "./kafka/order.kafka";
 import { initializeRedis } from "./config/redisClient";
+import { worker } from "./services/orderQueue";
 
 const app = express();
 const PORT = 5000;
@@ -20,7 +21,7 @@ AppDataSource.initialize()
 
     // Initialize Kafka handlers without blocking the rest of the app
     initializeOrderKafkaHandlers().catch(console.error);
-
+    // await worker.run();
     // Continue with app setup
     app.use("/api/orders", router);
     app.listen(PORT, () => {

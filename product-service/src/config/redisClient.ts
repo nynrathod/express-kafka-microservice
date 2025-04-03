@@ -6,6 +6,7 @@ const redisClient = new Redis({
   port: 6379, // Redis server port (default: 6379)
   // You can also use `url` if you have a complete Redis URI like redis://localhost:6379
   // url: "redis://localhost:6379",
+  maxRetriesPerRequest: null,
 });
 
 // Handle Redis errors

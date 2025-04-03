@@ -43,7 +43,7 @@ export async function processOrderValidationResult(
   },
   retryCount = 0,
 ) {
-  const RETRY_LIMIT = 3; // Maximum retries
+  const RETRY_LIMIT = 5; // Maximum retries
   const RETRY_DELAY = 2000; // Delay between retries in milliseconds
 
   if (validationResults.status === "available") {
@@ -58,7 +58,7 @@ export async function processOrderValidationResult(
       if (prevProductVersion) {
         const parsedPrevVersion = JSON.parse(prevProductVersion);
 
-        if (parsedPrevVersion.version === 55) {
+        if (parsedPrevVersion.version === validationResults.version) {
           const productDataString = await redisClient.get(
             `product:${validationResults.productId}`,
           );
@@ -68,6 +68,7 @@ export async function processOrderValidationResult(
           }
 
           const productData = JSON.parse(productDataString);
+          console.log("productData", productData);
           productData["stock"] =
             productData.stock - parsedRedisOrder.products.quantity;
           productData.version = parsedPrevVersion.version - 1;

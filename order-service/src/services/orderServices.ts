@@ -4,6 +4,7 @@ import { Order } from "../entities/Order";
 import { sendKafkaMessage } from "../kafka/kafkaUtils";
 import redisClient from "../config/redisClient";
 import { processOrderValidationResult } from "../kafka/order.kafka";
+import { orderQueue } from "./orderQueue";
 
 const orderRepository = AppDataSource.getRepository(Order);
 
@@ -27,7 +28,7 @@ export const createOrder = async (
 
     const productKey = `product:${product.productId}`;
     let productEntity = await redisClient.get(productKey);
-    let retries = 2;
+    let retries = 6;
 
     console.log("AfterproductEntity", productEntity);
 
@@ -47,7 +48,8 @@ export const createOrder = async (
         `Unable to process order due to locked product ${product.productId}.`,
       );
     }
-
+    await orderQueue.add("processOrder", orderData);
+    console.log("helloorderData", orderData);
     if (productEntity) {
       const parsedProductEntity = JSON.parse(productEntity);
       console.log(`Product entity found:`, parsedProductEntity);
@@ -59,9 +61,10 @@ export const createOrder = async (
         version: parsedProductEntity.version,
         stock: parsedProductEntity.stock,
       };
+      console.log("validationResultsssss", validationResults);
 
       // Process the validation results
-      await processOrderValidationResult(orderId, validationResults);
+      // await processOrderValidationResult(orderId, validationResults);
       return orderId;
     } else {
       console.log(
