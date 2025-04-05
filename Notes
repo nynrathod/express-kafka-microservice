@@ -1,0 +1,10 @@
+npx typeorm-ts-node-esm migration:generate -d ./data-source.ts ./src/migrations/users
+
+npx typeorm-ts-node-esm migration:run -d ./data-source.ts
+
+
+
+
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+.\bin\windows\kafka-server-start.bat .\config\server.properties
